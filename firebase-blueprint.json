@@ -1,0 +1,103 @@
+{
+  "entities": {
+    "pendrive": {
+      "title": "Pendrive",
+      "description": "A pendrive unit",
+      "type": "object",
+      "properties": {
+        "number": { "type": "string" },
+        "description": { "type": "string" },
+        "status": { "type": "string", "enum": ["available", "rented", "damaged", "lost"] },
+        "ownerId": { "type": "string" },
+        "createdAt": { "type": "number", "description": "Timestamp ms" },
+        "updatedAt": { "type": "number", "description": "Timestamp ms" }
+      },
+      "required": ["number", "description", "status", "ownerId", "createdAt", "updatedAt"]
+    },
+    "client": {
+      "title": "Client",
+      "description": "A registered client",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "nickname": { "type": "string" },
+        "room": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["name", "nickname", "room", "ownerId", "createdAt", "updatedAt"]
+    },
+    "rental": {
+      "title": "Rental",
+      "description": "A pendrive rental transaction",
+      "type": "object",
+      "properties": {
+        "pendriveId": { "type": "string" },
+        "clientId": { "type": "string" },
+        "plan": { "type": "string", "enum": ["12h", "24h", "weekly"] },
+        "price": { "type": "number" },
+        "startTime": { "type": "number" },
+        "expectedReturnTime": { "type": "number" },
+        "fine": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "returned", "damaged"] },
+        "paid": { "type": "boolean" },
+        "notifiedOverdue": { "type": "boolean" },
+        "notifiedReminder": { "type": "boolean" },
+        "ownerId": { "type": "string" },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["pendriveId", "clientId", "plan", "price", "startTime", "status", "paid", "ownerId", "createdAt", "updatedAt"]
+    },
+    "transaction": {
+      "title": "Transaction",
+      "description": "Financial transaction (payment, expense, damage)",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["payment", "expense", "damage_fee"] },
+        "amount": { "type": "number" },
+        "description": { "type": "string" },
+        "rentalId": { "type": "string", "description": "Optional link to a rental doc" },
+        "ownerId": { "type": "string" },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["type", "amount", "description", "ownerId", "createdAt", "updatedAt"]
+    },
+    "setting": {
+      "title": "User Setting",
+      "description": "Custom branding settings per user",
+      "type": "object",
+      "properties": {
+        "appName": { "type": "string" },
+        "logoUrl": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["appName", "ownerId", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "pendrives/{docId}": {
+      "schema": { "$ref": "#/entities/pendrive" },
+      "description": "Pendrives collection"
+    },
+    "clients/{docId}": {
+      "schema": { "$ref": "#/entities/client" },
+      "description": "Clients collection"
+    },
+    "rentals/{docId}": {
+      "schema": { "$ref": "#/entities/rental" },
+      "description": "Rentals collection"
+    },
+    "transactions/{docId}": {
+      "schema": { "$ref": "#/entities/transaction" },
+      "description": "Transactions collection"
+    },
+    "settings/{ownerId}": {
+      "schema": { "$ref": "#/entities/setting" },
+      "description": "User specific settings (branded by ownerId)"
+    }
+  }
+}
