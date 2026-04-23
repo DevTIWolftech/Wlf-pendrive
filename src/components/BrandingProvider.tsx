@@ -13,7 +13,7 @@ interface BrandingContextType {
 const BrandingContext = createContext<BrandingContextType | undefined>(undefined);
 
 export function BrandingProvider({ children }: { children: React.ReactNode }) {
-  const [appName, setAppName] = useState('WolfTech Consultoria em T.I.');
+  const [appName, setAppName] = useState('Wolftech Sistema de Gestão de aluguel');
   const [isConfigured, setIsConfigured] = useState(false);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
@@ -35,7 +35,7 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
     const unsub = onSnapshot(doc(db, 'settings', user.uid), (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data();
-        setAppName(data.appName || 'WolfTech Consultoria em T.I.');
+        setAppName(data.appName || 'Wolftech Sistema de Gestão de aluguel');
         setIsConfigured(true);
       } else {
         setIsConfigured(false);

@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../lib/firebase';
-import { LogIn, UserPlus, Github, Chrome } from 'lucide-react';
+import { LogIn, UserPlus, Github, Chrome, Cpu, ShieldCheck } from 'lucide-react';
+
+const WolfLogo = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M12 2L4 8L5 11L2 14L5 16L4 22L12 18L20 22L19 16L22 14L19 11L20 8L12 2Z" fill="currentColor" />
+    <path d="M8 8L12 11M16 8L12 11M12 11V15" stroke="rgba(255,255,255,0.4)" strokeWidth="0.5" strokeLinecap="round"/>
+  </svg>
+);
 
 export function Login() {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -52,11 +59,15 @@ export function Login() {
     <div className="min-h-screen dark:bg-zinc-950 bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
-          <div className="w-20 h-20 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl rotate-3 shadow-blue-500/20">
-             <Chrome className="w-10 h-10 text-white" />
+          <div className="w-24 h-24 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-2xl relative overflow-hidden group">
+            <div className="absolute inset-0 bg-blue-600/10 group-hover:bg-blue-600/20 transition-colors" />
+            <WolfLogo className="w-16 h-16 text-blue-500 relative z-10 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
+            <div className="absolute -bottom-1 -right-1">
+              <ShieldCheck className="w-6 h-6 text-emerald-500 fill-emerald-500/10" />
+            </div>
           </div>
-          <h1 className="text-3xl font-black dark:text-zinc-100 text-gray-900 tracking-tight italic uppercase tracking-tighter">Portal de Gestão</h1>
-          <p className="dark:text-zinc-500 text-gray-500 mt-2 font-medium">Acesse seu ambiente personalizado</p>
+          <h1 className="text-3xl font-black dark:text-zinc-100 text-gray-900 tracking-tighter italic uppercase">Wolftech</h1>
+          <p className="text-[10px] font-bold dark:text-zinc-500 text-gray-500 mt-1 uppercase tracking-[0.2em] opacity-80">Sistema de Gestão de Aluguel</p>
         </div>
 
         <div className="dark:bg-zinc-900 bg-white border dark:border-zinc-800 border-gray-200 rounded-3xl p-8 shadow-2xl relative overflow-hidden">

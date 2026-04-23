@@ -1,11 +1,11 @@
 {
-  "name": "Pendrive Aluguel",
-  "short_name": "Pendrive",
+  "name": "Wolftech | Sistema de Gestão de aluguel",
+  "short_name": "Wolftech",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#09090b",
   "theme_color": "#2563eb",
-  "description": "App para registro e aluguel de pendrives.",
+  "description": "Consultoria em T.I. e Gestão de Ativos.",
   "icons": [
     {
       "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdib3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjU2M2ViIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIyIDEybC02LTRtNiA0bC02IDRtNi00SDJoMTAiPjwvcGF0aD48L3N2Zz4=",

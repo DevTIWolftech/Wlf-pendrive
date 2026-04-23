@@ -16,6 +16,13 @@ import { Summary } from './Summary';
 import { Settings } from './Settings';
 import { Admin } from './Admin';
 
+const WolfLogo = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M12 2L4 8L5 11L2 14L5 16L4 22L12 18L20 22L19 16L22 14L19 11L20 8L12 2Z" fill="currentColor" />
+    <path d="M8 8L12 11M16 8L12 11M12 11V15" stroke="rgba(255,255,255,0.5)" strokeWidth="0.5" strokeLinecap="round"/>
+  </svg>
+);
+
 export function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -77,10 +84,13 @@ export function Dashboard() {
       <aside className="hidden md:flex flex-col w-64 dark:bg-zinc-900 bg-white border-r dark:border-zinc-800 border-gray-200">
         <div className="p-6">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-              <Cpu className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-center shadow-lg group">
+              <WolfLogo className="w-6 h-6 text-white group-hover:text-blue-500 transition-colors" />
             </div>
-            <span className="font-black text-sm dark:text-zinc-100 text-gray-900 uppercase tracking-tighter leading-none">{appName}</span>
+            <div className="flex flex-col">
+              <span className="font-black text-sm dark:text-zinc-100 text-gray-900 uppercase tracking-tighter leading-tight">Wolftech</span>
+              <span className="text-[8px] font-bold text-blue-500 uppercase tracking-widest leading-none">Gestão de Aluguel</span>
+            </div>
           </div>
           <nav className="space-y-1">
             {navItems.map((item) => (
@@ -122,8 +132,9 @@ export function Dashboard() {
             Sair
           </button>
           
-          <div className="pt-2 text-center">
-            <span className="text-[9px] font-bold text-gray-400 dark:text-zinc-600 uppercase tracking-[0.2em]">versão: 1.0.A1</span>
+          <div className="pt-2 text-center space-y-1">
+            <p className="text-[10px] text-gray-400 dark:text-zinc-600 leading-tight">🌟 Em memória de Valdecir G de Lima. <br/> O Primeiro que acreditou na realização desta marca. Obrigado Pai.</p>
+            <span className="text-[9px] font-bold text-gray-400 dark:text-zinc-600 uppercase tracking-[0.2em] block">versão core: 1.2.0</span>
           </div>
         </div>
       </aside>
@@ -133,10 +144,13 @@ export function Dashboard() {
         {/* Mobile Header */}
         <header className="md:hidden dark:bg-zinc-900 bg-white border-b dark:border-zinc-800 border-gray-200 p-4 sticky top-0 z-10 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg">
-              <Cpu className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 bg-zinc-900 border border-zinc-800 rounded-lg flex items-center justify-center shadow-lg">
+              <WolfLogo className="w-5 h-5" />
             </div>
-            <span className="font-bold text-base truncate max-w-[150px] uppercase tracking-tighter leading-none">{appName}</span>
+            <div className="flex flex-col">
+              <span className="font-black text-sm dark:text-white text-gray-900 uppercase tracking-tighter leading-tight">Wolftech</span>
+              <span className="text-[7px] font-bold text-blue-500 uppercase tracking-widest leading-none">Gestão</span>
+            </div>
           </div>
           <div className="flex gap-1">
             <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="p-2 dark:text-zinc-400 text-gray-500">
@@ -158,8 +172,9 @@ export function Dashboard() {
           <Route path="/admin" element={<Admin />} />
         </Routes>
 
-        <div className="md:hidden pb-4 pt-8 text-center">
-            <span className="text-[9px] font-bold text-gray-400 dark:text-zinc-600 uppercase tracking-[0.2em]">versão: 1.0.A1</span>
+        <div className="md:hidden pb-4 pt-8 text-center space-y-1">
+            <p className="text-[10px] text-gray-400 dark:text-zinc-600 leading-tight px-4">🌟 Em memória de Valdecir G de Lima. <br/> O Primeiro que acreditou na realização desta marca. Obrigado Pai.</p>
+            <span className="text-[9px] font-bold text-gray-400 dark:text-zinc-600 uppercase tracking-[0.2em] block">versão core: 1.2.0</span>
         </div>
       </main>
 
