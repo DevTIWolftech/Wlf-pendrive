@@ -7,6 +7,7 @@ interface BrandingContextType {
   appName: string;
   isConfigured: boolean;
   loading: boolean;
+  user: any;
   updateBranding: (name: string) => Promise<void>;
 }
 
@@ -19,13 +20,14 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    return onAuthStateChanged(auth, (u) => {
+    const unsub = onAuthStateChanged(auth, (u) => {
       setUser(u);
       if (!u) {
         setIsConfigured(false);
         setLoading(false);
       }
     });
+    return unsub;
   }, []);
 
   useEffect(() => {
@@ -61,7 +63,7 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <BrandingContext.Provider value={{ appName, isConfigured, loading, updateBranding }}>
+    <BrandingContext.Provider value={{ appName, isConfigured, loading, user, updateBranding }}>
       {children}
     </BrandingContext.Provider>
   );
