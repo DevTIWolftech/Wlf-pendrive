@@ -24,8 +24,16 @@ export function Login() {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
     } catch (err: any) {
-      setError('Erro ao entrar com Google. Verifique se o login está habilitado no Console.');
-      console.error(err);
+      if (err.code === 'auth/unauthorized-domain') {
+        setError('Domínio não autorizado. Adicione este domínio no painel do Firebase Authentication (Settings > Authorized domains).');
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        setError('O popup de login foi fechado antes de concluir.');
+      } else if (err.code === 'auth/operation-not-allowed') {
+        setError('Login com Google não está habilitado no Firebase Console.');
+      } else {
+        setError(`Erro: ${err.message || err.code || 'Desconhecido'}`);
+      }
+      console.error("Google Auth Error:", err);
     } finally {
       setLoading(false);
     }
