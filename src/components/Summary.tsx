@@ -128,15 +128,6 @@ export function Summary() {
           </div>
         </div>
       </div>
-
-      <div className="text-center space-y-2 pt-12">
-        <p className="text-[10px] text-gray-400 dark:text-zinc-600 leading-tight italic">
-          🌟 Em memória de Valdecir G de Lima, O Primeiro que acreditou na realização desta marca. Obrigado Pai.
-        </p>
-        <div className="text-[10px] text-gray-400 dark:text-zinc-600 font-mono uppercase tracking-widest">
-          {appName} System • versão core: 1.2.0
-        </div>
-      </div>
     </div>
   );
 }

@@ -172,7 +172,7 @@ export function Dashboard() {
           <Route path="/admin" element={<Admin />} />
         </Routes>
 
-        <div className="md:hidden pb-4 pt-8 text-center space-y-1">
+        <div className="md:hidden pb-24 pt-8 text-center space-y-1">
             <p className="text-[10px] text-gray-400 dark:text-zinc-600 leading-tight px-4">🌟 Em memória de Valdecir G de Lima. <br/> O Primeiro que acreditou na realização desta marca. Obrigado Pai.</p>
             <span className="text-[9px] font-bold text-gray-400 dark:text-zinc-600 uppercase tracking-[0.2em] block">versão core: 1.2.0</span>
         </div>
