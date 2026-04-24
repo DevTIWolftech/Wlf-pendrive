@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../lib/firebase';
-import { LogIn, UserPlus, Github, Chrome, Cpu, ShieldCheck } from 'lucide-react';
+import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
+import { useBranding } from './BrandingProvider';
+import { LogIn, UserPlus, ShieldCheck } from 'lucide-react';
 
 const WolfLogo = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -16,47 +17,55 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const handleGoogleLogin = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-    } catch (err: any) {
-      if (err.code === 'auth/unauthorized-domain') {
-        setError('Domínio não autorizado. Adicione este domínio no painel do Firebase Authentication (Settings > Authorized domains).');
-      } else if (err.code === 'auth/popup-closed-by-user') {
-        setError('O popup de login foi fechado antes de concluir.');
-      } else if (err.code === 'auth/operation-not-allowed') {
-        setError('Login com Google não está habilitado no Firebase Console.');
-      } else {
-        setError(`Erro: ${err.message || err.code || 'Desconhecido'}`);
-      }
-      console.error("Google Auth Error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { setUserContext } = useBranding();
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    
     try {
       if (isRegistering) {
-        await createUserWithEmailAndPassword(auth, email, password);
+        // Simple manual registration validation
+        const q = query(collection(db, 'system_users'), where('email', '==', email.toLowerCase()));
+        const snapshot = await getDocs(q);
+        
+        if (!snapshot.empty) {
+          setError('Este e-mail já está em uso.');
+        } else {
+          const docRef = await addDoc(collection(db, 'system_users'), {
+            email: email.toLowerCase(),
+            password: password, // In a real system, you'd hash this. For direct access, storing directly for ease of use.
+            role: 'admin',
+            createdAt: Date.now()
+          });
+          
+          setUserContext({
+            uid: docRef.id,
+            email: email.toLowerCase(),
+            role: 'admin'
+          });
+        }
       } else {
-        await signInWithEmailAndPassword(auth, email, password);
+        const q = query(
+          collection(db, 'system_users'), 
+          where('email', '==', email.toLowerCase()),
+          where('password', '==', password)
+        );
+        const snapshot = await getDocs(q);
+        
+        if (!snapshot.empty) {
+          const userDoc = snapshot.docs[0];
+          setUserContext({
+            uid: userDoc.id,
+            ...userDoc.data()
+          });
+        } else {
+          setError('E-mail ou senha incorretos.');
+        }
       }
     } catch (err: any) {
-      if (err.code === 'auth/operation-not-allowed') {
-        setError('O login por E-mail/Senha precisa ser habilitado no Firebase Console.');
-      } else if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
-        setError('E-mail ou senha incorretos.');
-      } else {
-        setError('Ocorreu um erro na autenticação.');
-      }
+      setError(`Erro no banco: ${err.message}`);
       console.error(err);
     } finally {
       setLoading(false);
@@ -131,22 +140,7 @@ export function Login() {
             </button>
           </form>
 
-          <div className="relative mb-6">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t dark:border-zinc-800 border-gray-100"></div></div>
-            <div className="relative flex justify-center text-xs uppercase"><span className="dark:bg-zinc-900 bg-white px-2 text-gray-400 dark:text-zinc-500 font-bold">Ou entrar com</span></div>
-          </div>
-
-          <button 
-            type="button"
-            onClick={handleGoogleLogin}
-            disabled={loading}
-            className="w-full h-12 dark:bg-zinc-950 bg-gray-50 dark:hover:bg-zinc-800 hover:bg-gray-100 border dark:border-zinc-800 border-gray-200 rounded-xl font-bold flex items-center justify-center gap-2 transition-all"
-          >
-            <Chrome className="w-5 h-5 text-red-500" />
-            Google
-          </button>
-
-          <p className="mt-8 text-center text-sm text-gray-500">
+          <p className="text-center text-sm text-gray-500 relative z-10 pt-4">
             {isRegistering ? 'Já tem um ambiente?' : 'Novo por aqui?'} 
             <button 
               type="button"
@@ -159,7 +153,7 @@ export function Login() {
         </div>
 
         <div className="mt-8 text-center">
-           <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 dark:text-zinc-600">Ambiente Multi-Tenant Certificado</p>
+           <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 dark:text-zinc-600">Acesso Restrito Wolftech</p>
         </div>
       </div>
     </div>

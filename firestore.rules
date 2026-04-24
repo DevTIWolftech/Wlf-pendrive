@@ -1,88 +1,8 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // 0. Default Deny
     match /{document=**} {
-      allow read, write: if false;
+      allow read, write: if true;
     }
-
-    // --- Helpers ---
-    function isSignedIn() { return request.auth != null; }
-    function isOwner(data) { return isSignedIn() && data.ownerId == request.auth.uid; }
-    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
-    
-    function isValidClient(client) {
-      return client.keys().hasAll(['name', 'nickname', 'room', 'ownerId', 'createdAt', 'updatedAt']) &&
-             client.name is string && client.name.size() > 0 && client.name.size() <= 100 &&
-             client.room is string && client.room.size() > 0 &&
-             client.ownerId == request.auth.uid;
-    }
-
-    function isValidPendrive(pen) {
-      return pen.keys().hasAll(['number', 'description', 'status', 'ownerId', 'createdAt', 'updatedAt']) &&
-             pen.number is string && pen.number.size() > 0 &&
-             pen.ownerId == request.auth.uid;
-    }
-
-    function isValidRental(rental) {
-      return rental.keys().hasAll(['pendriveId', 'clientId', 'plan', 'price', 'startTime', 'status', 'paid', 'ownerId', 'createdAt', 'updatedAt']) &&
-             rental.price is number && rental.price >= 0 &&
-             rental.ownerId == request.auth.uid;
-    }
-
-    function isValidTransaction(tx) {
-      return tx.keys().hasAll(['type', 'amount', 'description', 'ownerId', 'createdAt', 'updatedAt']) &&
-             tx.amount is number && tx.amount >= 0 &&
-             tx.ownerId == request.auth.uid;
-    }
-
-    // --- Rules ---
-
-    match /clients/{clientId} {
-      allow get: if isOwner(resource.data) && isValidId(clientId);
-      allow list: if isOwner(resource.data);
-      allow create: if isSignedIn() && isValidClient(request.resource.data) && isValidId(clientId);
-      allow update: if isOwner(resource.data) && isValidClient(request.resource.data) && (
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'nickname', 'room', 'updatedAt'])
-      );
-      allow delete: if isOwner(resource.data);
-    }
-
-    match /pendrives/{penId} {
-      allow get: if isOwner(resource.data) && isValidId(penId);
-      allow list: if isOwner(resource.data);
-      allow create: if isSignedIn() && isValidPendrive(request.resource.data) && isValidId(penId);
-      allow update: if isOwner(resource.data) && isValidPendrive(request.resource.data) && (
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['number', 'description', 'status', 'updatedAt'])
-      );
-      allow delete: if isOwner(resource.data);
-    }
-
-    match /rentals/{rentalId} {
-      allow get: if isOwner(resource.data) && isValidId(rentalId);
-      allow list: if isOwner(resource.data);
-      allow create: if isSignedIn() && isValidRental(request.resource.data) && isValidId(rentalId);
-      allow update: if isOwner(resource.data) && isValidRental(request.resource.data) && (
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'paid', 'updatedAt', 'expectedReturnTime', 'fine'])
-      );
-      allow delete: if isOwner(resource.data);
-    }
-
-    match /transactions/{txId} {
-      allow get: if isOwner(resource.data) && isValidId(txId);
-      allow list: if isOwner(resource.data);
-      allow create: if isSignedIn() && isValidTransaction(request.resource.data) && isValidId(txId);
-      allow update: if isOwner(resource.data) && (
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['updatedAt'])
-      );
-      allow delete: if isOwner(resource.data);
-    }
-
-    match /settings/{userId} {
-      allow read: if isSignedIn() && request.auth.uid == userId;
-      allow write: if isSignedIn() && request.auth.uid == userId;
-    }
-
   }
 }

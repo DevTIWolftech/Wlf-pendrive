@@ -27,11 +27,11 @@ export function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const { theme, setTheme } = useTheme();
-  const { appName } = useBranding();
+  const { appName, user, logout } = useBranding();
 
   const handleLogout = async () => {
     try {
-      await auth.signOut();
+      logout();
       navigate('/');
     } catch (err) {
       console.error('Erro ao sair:', err);
@@ -74,7 +74,7 @@ export function Dashboard() {
   ];
 
   // Adiciona menu de Admin apenas para o dono do sistema
-  if (auth.currentUser?.email === 'rodrigolonewolf@gmail.com') {
+  if (user?.email === 'rodrigolonewolf@gmail.com' || user?.role === 'admin') {
     navItems.push({ name: 'Admin', icon: ShieldCheck, path: '/admin' });
   }
 
@@ -113,7 +113,7 @@ export function Dashboard() {
         <div className="mt-auto p-4 border-t dark:border-zinc-800 border-gray-200 space-y-2">
           <div className="px-3 py-2">
              <p className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest">Ativo como</p>
-             <p className="text-xs font-semibold dark:text-zinc-300 text-gray-700 truncate">{auth.currentUser?.email}</p>
+             <p className="text-xs font-semibold dark:text-zinc-300 text-gray-700 truncate">{user?.email}</p>
           </div>
           
           <button

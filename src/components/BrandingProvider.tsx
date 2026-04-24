@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { db, auth } from '../lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import { db } from '../lib/firebase';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 
 interface BrandingContextType {
@@ -9,6 +8,8 @@ interface BrandingContextType {
   loading: boolean;
   user: any;
   updateBranding: (name: string) => Promise<void>;
+  logout: () => void;
+  setUserContext: (user: any) => void;
 }
 
 const BrandingContext = createContext<BrandingContextType | undefined>(undefined);
@@ -20,18 +21,40 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      if (!u) {
-        setIsConfigured(false);
-        setLoading(false);
+    // Check local storage for existing session
+    const storedUser = localStorage.getItem('wolftech_user');
+    if (storedUser) {
+      try {
+        const parsed = JSON.parse(storedUser);
+        setUser(parsed);
+      } catch (e) {
+        localStorage.removeItem('wolftech_user');
       }
-    });
-    return unsub;
+    } else {
+      setIsConfigured(false);
+      setLoading(false);
+    }
   }, []);
 
+  const setUserContext = (newUser: any) => {
+    setUser(newUser);
+    if (newUser) {
+      localStorage.setItem('wolftech_user', JSON.stringify(newUser));
+    } else {
+      localStorage.removeItem('wolftech_user');
+      setIsConfigured(false);
+    }
+  };
+
+  const logout = () => {
+    setUserContext(null);
+  }
+
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     const unsub = onSnapshot(doc(db, 'settings', user.uid), (docSnap) => {
@@ -63,7 +86,7 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <BrandingContext.Provider value={{ appName, isConfigured, loading, user, updateBranding }}>
+    <BrandingContext.Provider value={{ appName, isConfigured, loading, user, updateBranding, logout, setUserContext }}>
       {children}
     </BrandingContext.Provider>
   );
